@@ -43,11 +43,23 @@ public class MainActivity extends ActionBarActivity {
 
         // Get a Cursor containing all of the rows in the Words table
         Cursor cursor = resolver.query(UserDictionary.Words.CONTENT_URI, null, null, null, null);
-        dictTextView.setText("The UserDictionary contains " + cursor.getCount() + " words\n");
-        while (cursor.moveToNext()) {
-            dictTextView.append(cursor.getString(cursor.getColumnIndex("_id")) + " - " + cursor.getString(cursor.getColumnIndex("frequency")) + " - " + cursor.getString(cursor.getColumnIndex("word")) + "\n");
+        try {
+            dictTextView.setText("The UserDictionary contains " + cursor.getCount() + " words\n");
+            dictTextView.append("COLUMNS: " + Words._ID + " - " + Words.FREQUENCY + " - " + Words.WORD);
+            int idColumn = cursor.getColumnIndex(Words._ID);
+            int frequencyColumn = cursor.getColumnIndex(Words.FREQUENCY);
+            int wordColumn = cursor.getColumnIndex(Words.WORD);
+
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(idColumn);
+                int frequency = cursor.getInt(frequencyColumn);
+                String word = cursor.getString(wordColumn);
+
+                dictTextView.append("\n" + id + " - " + frequency + " - " + word);
+            }
+        } finally {
+            cursor.close();
         }
-        cursor.close();
-        Log.v("Test", Words.CONTENT_URI.toString());
+
     }
 }
